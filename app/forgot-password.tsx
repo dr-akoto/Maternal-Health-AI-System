@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 
@@ -29,12 +29,12 @@ export default function ForgotPasswordScreen() {
     setLoading(true);
     setError('');
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    const { error: resetError } = await api.forgotPassword(email);
 
     setLoading(false);
 
     if (resetError) {
-      setError(resetError.message);
+      setError(resetError.error || 'Failed to send reset email');
     } else {
       setSuccess(true);
     }

@@ -13,18 +13,22 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Heart } from 'lucide-react-native';
+import { api } from '@/lib/api';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { signIn, userRole, loading: authLoading } = useAuth();
+  const { signIn, userRole, loading: authLoading, user, signOut, reloadProfile } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [noProfile, setNoProfile] = useState(false);
 
-  // Redirect when user is authenticated
+  // Redirect when user is authenticated and has a role
   useEffect(() => {
-    if (!authLoading && userRole) {
+    if (!authLoading && user && userRole) {
+      setLoading(false);
+      setNoProfile(false);
       if (userRole === 'mother') {
         router.replace('/(mother)/(tabs)' as any);
       } else if (userRole === 'doctor') {
@@ -32,8 +36,41 @@ export default function LoginScreen() {
       } else if (userRole === 'admin') {
         router.replace('/(admin)/(tabs)' as any);
       }
+    } else if (!authLoading && user && !userRole) {
+      // User authenticated but no profile found
+      setLoading(false);
+      setNoProfile(true);
+      setError('Your profile was not created. Click below to create it.');
     }
-  }, [userRole, authLoading]);
+  }, [userRole, authLoading, user]);
+
+  // Create missing profile using API
+  const handleCreateProfile = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const fullName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+      
+      // Use API to create profile
+      const { data, error: profileError } = await api.createProfile(fullName);
+      
+      if (profileError) {
+        throw new Error(profileError.error || 'Failed to create profile');
+      }
+      
+      // Reload profile
+      setNoProfile(false);
+      await reloadProfile();
+    } catch (err: any) {
+      console.error('Error creating profile:', err);
+      setError(err.message || 'Failed to create profile');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -47,8 +84,14 @@ export default function LoginScreen() {
     const { error: signInError } = await signIn(email, password);
 
     if (signInError) {
-      setError(signInError.message);
+      setError(signInError.message || 'Login failed. Please try again.');
       setLoading(false);
+    } else {
+      // Success - loading will stop when redirect happens via useEffect
+      // Add a small delay then stop loading if redirect doesn't happen
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
   };
 
@@ -86,12 +129,33 @@ export default function LoginScreen() {
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <Button
-            title="Sign In"
-            onPress={handleLogin}
-            loading={loading}
-            style={styles.button}
-          />
+          {noProfile ? (
+            <View>
+              <Button
+                title="Create My Profile"
+                onPress={handleCreateProfile}
+                loading={loading}
+                style={styles.createProfileButton}
+              />
+              <TouchableOpacity
+                onPress={async () => {
+                  await signOut();
+                  setNoProfile(false);
+                  setError('');
+                }}
+                style={styles.linkButton}
+              >
+                <Text style={styles.linkText}>Sign in with different account</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Button
+              title="Sign In"
+              onPress={handleLogin}
+              loading={loading}
+              style={styles.button}
+            />
+          )}
 
           <TouchableOpacity
             onPress={() => router.push('/forgot-password')}
@@ -147,6 +211,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
+  },
+  createProfileButton: {
+    marginTop: 8,
+    backgroundColor: '#10B981',
   },
   error: {
     color: '#FF3B30',

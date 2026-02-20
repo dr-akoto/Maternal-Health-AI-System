@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
-import { authService } from "@/lib/supabase";
+import { api, User as ApiUser, UserRole as ApiUserRole } from "@/lib/api";
 
 const sb = supabase as any;
 
@@ -32,6 +32,7 @@ interface AuthContextType {
   updateLastSeen: (userId: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, userType: 'mother' | 'doctor') => Promise<{ error: any }>;
+  reloadProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,14 +56,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loadUserProfile = async (userId: string) => {
     try {
-      // Check if user is a mother
-      const { data: motherData } = await sb
+      // Check if user is a mother - use maybeSingle() to avoid error when no row found
+      const { data: motherData, error: motherError } = await sb
         .from("mother_profiles")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (motherData) {
+      if (motherData && !motherError) {
         setUserRole("mother");
         setMotherProfile(motherData);
         setDoctorProfile(null);
@@ -71,13 +72,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Check if user is a doctor
-      const { data: doctorData } = await sb
+      const { data: doctorData, error: doctorError } = await sb
         .from("doctor_profiles")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (doctorData) {
+      if (doctorData && !doctorError) {
         setUserRole("doctor");
         setDoctorProfile(doctorData);
         setMotherProfile(null);
@@ -86,13 +87,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Check if user is an admin
-      const { data: adminData } = await sb
+      const { data: adminData, error: adminError } = await sb
         .from("admin_profiles")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (adminData) {
+      if (adminData && !adminError) {
         setUserRole("admin");
         setMotherProfile(null);
         setDoctorProfile(null);
@@ -101,6 +102,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // User exists but has no profile yet (new registration)
+      console.warn("No profile found for user:", userId);
+      console.warn("User may need to complete registration or profile was not created.");
       setUserRole(null);
       setMotherProfile(null);
       setDoctorProfile(null);
@@ -266,6 +269,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    // Use API to logout
+    await api.logout();
+    // Also sign out from Supabase client (for any cached sessions)
     await sb.auth.signOut();
     setUser(null);
     setSession(null);
@@ -278,19 +284,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     setAuthLoading(true);
     try {
-      const { data, error } = await authService.signIn(email, password);
-      if (error) return { error };
+      // Use API for login
+      const { data, error } = await api.login(email, password);
+      
+      if (error) {
+        return { error: new Error(error.error || 'Login failed') };
+      }
 
-      // If we have a session, update local state
-      const session = data?.session;
-      if (session?.user) {
-        setSession(session);
-        setUser(session.user);
-        await loadUserProfile(session.user.id);
+      if (data?.session && data?.user) {
+        // Set session for Supabase client as well (for real-time subscriptions)
+        await sb.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        // Get the Supabase user object
+        const { data: { user: supabaseUser } } = await sb.auth.getUser();
+        
+        if (supabaseUser) {
+          setSession({ 
+            access_token: data.session.access_token, 
+            refresh_token: data.session.refresh_token 
+          } as Session);
+          setUser(supabaseUser);
+          
+          // Set profile from API response
+          if (data.user.profile) {
+            if (data.user.role === 'mother') {
+              setUserRole('mother');
+              setMotherProfile(data.user.profile);
+              setDoctorProfile(null);
+            } else if (data.user.role === 'doctor') {
+              setUserRole('doctor');
+              setDoctorProfile(data.user.profile);
+              setMotherProfile(null);
+            } else if (data.user.role === 'admin') {
+              setUserRole('admin');
+              setMotherProfile(null);
+              setDoctorProfile(null);
+            }
+            await loadNotifications(supabaseUser.id);
+          } else {
+            // No profile yet - load it
+            await loadUserProfile(supabaseUser.id);
+          }
+        }
       }
 
       return { error: null };
-    } catch (err) {
+    } catch (err: any) {
       return { error: err };
     } finally {
       setAuthLoading(false);
@@ -300,22 +342,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, userType: 'mother' | 'doctor') => {
     setAuthLoading(true);
     try {
-      // authService expects more profile fields; supply minimal values from the registration form
-      const { data, error } = await authService.signUp(email, password, {
-        role: userType,
-        first_name: '',
-        last_name: '',
-        phone_number: '',
-      });
+      // Use API for registration
+      const { data, error } = await api.register(email, password, userType);
 
-      if (error) return { error };
+      if (error) {
+        return { error: new Error(error.error || 'Registration failed') };
+      }
 
       // Do not auto-sign-in; user will be redirected to login
       return { error: null };
-    } catch (err) {
+    } catch (err: any) {
       return { error: err };
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  /* =========================
+     RELOAD PROFILE
+  ========================== */
+
+  const reloadProfile = async () => {
+    if (user) {
+      await loadUserProfile(user.id);
     }
   };
 
@@ -347,6 +396,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     updateLastSeen,
     signIn,
     signUp,
+    reloadProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

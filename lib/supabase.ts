@@ -91,7 +91,10 @@ export const authService = {
     }
   ) {
     try {
-      // 1. Create auth user
+      // Create auth user with metadata
+      // The database trigger (handle_new_user) will automatically create the profile
+      const fullName = `${userData.first_name} ${userData.last_name}`.trim() || email.split('@')[0];
+      
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -99,55 +102,14 @@ export const authService = {
           data: {
             email,
             role: userData.role,
+            full_name: fullName,
+            phone: userData.phone_number || null,
           },
         },
       });
 
       if (signUpError) throw signUpError;
       if (!authData.user) throw new Error('User creation failed');
-
-      // 2. Create role-specific profile
-      // The profile tables reference auth.users directly via user_id
-      const fullName = `${userData.first_name} ${userData.last_name}`.trim() || email.split('@')[0];
-
-      if (userData.role === 'mother') {
-        const { error: profileError } = await supabase
-          .from('mother_profiles')
-          .insert([{
-            user_id: authData.user.id,
-            full_name: fullName,
-            phone: userData.phone_number || null,
-          }]);
-        if (profileError) {
-          console.error('Mother profile creation error:', profileError);
-          // Don't throw - auth user is created, profile can be created later
-        }
-      } else if (userData.role === 'doctor') {
-        const { error: profileError } = await supabase
-          .from('doctor_profiles')
-          .insert([{
-            user_id: authData.user.id,
-            full_name: fullName,
-            phone: userData.phone_number || 'Not provided',
-            license_number: `PENDING-${authData.user.id.slice(0, 8)}`,
-            specialization: 'General',
-          }]);
-        if (profileError) {
-          console.error('Doctor profile creation error:', profileError);
-          // Don't throw - auth user is created, profile can be created later
-        }
-      } else if (userData.role === 'admin') {
-        const { error: profileError } = await supabase
-          .from('admin_profiles')
-          .insert([{
-            user_id: authData.user.id,
-            full_name: fullName,
-            phone: userData.phone_number || null,
-          }]);
-        if (profileError) {
-          console.error('Admin profile creation error:', profileError);
-        }
-      }
 
       return { data: authData, error: null };
     } catch (error) {
