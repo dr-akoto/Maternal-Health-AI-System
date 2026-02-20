@@ -5,8 +5,13 @@ import { Database } from '../types/supabase';
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Check for missing configuration
-if (!supabaseUrl || supabaseUrl === 'https://your-project-id.supabase.co') {
+// Check for missing configuration - only warn if truly not configured
+const isConfigured = supabaseUrl && 
+  !supabaseUrl.includes('your-project-id') && 
+  !supabaseUrl.includes('placeholder') &&
+  supabaseUrl.includes('.supabase.co');
+
+if (!isConfigured) {
   console.warn(
     '⚠️ Supabase URL not configured!\n' +
     'Please update your .env file with your Supabase credentials:\n' +
@@ -14,7 +19,7 @@ if (!supabaseUrl || supabaseUrl === 'https://your-project-id.supabase.co') {
     '2. Create a new project or select existing one\n' +
     '3. Go to Project Settings > API\n' +
     '4. Copy the credentials to your .env file\n' +
-    '5. Restart the Expo development server'
+    '5. Restart the Expo development server with: npx expo start -c'
   );
 }
 
@@ -24,9 +29,9 @@ const handleError = (error: any, context: string) => {
   return error;
 };
 
-// Use a placeholder URL if not configured (app will show warning but won't crash)
-const effectiveUrl = supabaseUrl || 'https://placeholder.supabase.co';
-const effectiveKey = supabaseAnonKey || 'placeholder-key';
+// Use actual URL if configured, otherwise placeholder (app will show warning but won't crash)
+const effectiveUrl = isConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
+const effectiveKey = isConfigured ? supabaseAnonKey : 'placeholder-key';
 
 // Create a singleton instance of the Supabase client
 export const supabase = createClient<Database>(effectiveUrl, effectiveKey, {
