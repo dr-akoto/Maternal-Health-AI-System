@@ -68,9 +68,6 @@ export const supabase = createClient<Database>(effectiveUrl, effectiveKey, {
 
 // Type-safe database access
 export type Tables = Database['public']['Tables'];
-export type User = Database['public']['Tables']['users']['Row'];
-export type UserInsert = Database['public']['Tables']['users']['Insert'];
-export type UserUpdate = Database['public']['Tables']['users']['Update'];
 
 // Custom error class for auth errors
 export class AuthError extends Error {
@@ -109,39 +106,47 @@ export const authService = {
       if (signUpError) throw signUpError;
       if (!authData.user) throw new Error('User creation failed');
 
-      // 2. Create user in public.users table
-      const { error: userError } = await supabase
-        .from('users')
-        .insert([{
-          id: authData.user.id,
-          email,
-          role: userData.role,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }]);
-
-      if (userError) throw userError;
-
-      // 3. Create role-specific profile
-      const profileData = {
-        user_id: authData.user.id,
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-        phone_number: userData.phone_number,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      // 2. Create role-specific profile
+      // The profile tables reference auth.users directly via user_id
+      const fullName = `${userData.first_name} ${userData.last_name}`.trim() || email.split('@')[0];
 
       if (userData.role === 'mother') {
         const { error: profileError } = await supabase
           .from('mother_profiles')
-          .insert([profileData]);
-        if (profileError) throw profileError;
+          .insert([{
+            user_id: authData.user.id,
+            full_name: fullName,
+            phone: userData.phone_number || null,
+          }]);
+        if (profileError) {
+          console.error('Mother profile creation error:', profileError);
+          // Don't throw - auth user is created, profile can be created later
+        }
       } else if (userData.role === 'doctor') {
         const { error: profileError } = await supabase
           .from('doctor_profiles')
-          .insert([profileData]);
-        if (profileError) throw profileError;
+          .insert([{
+            user_id: authData.user.id,
+            full_name: fullName,
+            phone: userData.phone_number || 'Not provided',
+            license_number: `PENDING-${authData.user.id.slice(0, 8)}`,
+            specialization: 'General',
+          }]);
+        if (profileError) {
+          console.error('Doctor profile creation error:', profileError);
+          // Don't throw - auth user is created, profile can be created later
+        }
+      } else if (userData.role === 'admin') {
+        const { error: profileError } = await supabase
+          .from('admin_profiles')
+          .insert([{
+            user_id: authData.user.id,
+            full_name: fullName,
+            phone: userData.phone_number || null,
+          }]);
+        if (profileError) {
+          console.error('Admin profile creation error:', profileError);
+        }
       }
 
       return { data: authData, error: null };
@@ -248,16 +253,20 @@ export const authService = {
     }
   },
 
-  // Update user profile
-  async updateProfile(updates: Partial<UserUpdate>) {
+  // Update user profile (updates the appropriate profile table based on role)
+  async updateProfile(updates: Record<string, any>, role: 'mother' | 'doctor' | 'admin') {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No authenticated user');
 
+      const table = role === 'mother' ? 'mother_profiles' 
+                  : role === 'doctor' ? 'doctor_profiles' 
+                  : 'admin_profiles';
+
       const { error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', user.id);
+        .from(table)
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('user_id', user.id);
 
       if (error) throw error;
       return { error: null };

@@ -55,45 +55,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loadUserProfile = async (userId: string) => {
     try {
-      const { data: userData } = await sb
-        .from("users")
-        .select("role, last_seen")
-        .eq("id", userId)
+      // Check if user is a mother
+      const { data: motherData } = await sb
+        .from("mother_profiles")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
-      if (!userData) return;
-
-      setUserRole(userData.role);
-      setLastSeen(userData.last_seen ? new Date(userData.last_seen) : null);
-
-      if (userData.role === "mother") {
-        const { data } = await sb
-          .from("mother_profiles")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
-
-        setMotherProfile(data ?? null);
+      if (motherData) {
+        setUserRole("mother");
+        setMotherProfile(motherData);
+        setDoctorProfile(null);
+        await loadNotifications(userId);
+        return;
       }
 
-      if (userData.role === "doctor") {
-        const { data } = await sb
-          .from("doctor_profiles")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
+      // Check if user is a doctor
+      const { data: doctorData } = await sb
+        .from("doctor_profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
 
-        setDoctorProfile(data ?? null);
+      if (doctorData) {
+        setUserRole("doctor");
+        setDoctorProfile(doctorData);
+        setMotherProfile(null);
+        await loadNotifications(userId);
+        return;
       }
 
-      // Handle admin role
-      if (userData.role === "admin") {
-        // Admin may not have a separate profile table
-        // Just set the role
+      // Check if user is an admin
+      const { data: adminData } = await sb
+        .from("admin_profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (adminData) {
+        setUserRole("admin");
+        setMotherProfile(null);
+        setDoctorProfile(null);
+        await loadNotifications(userId);
+        return;
       }
 
-      await loadNotifications(userId);
+      // User exists but has no profile yet (new registration)
+      setUserRole(null);
+      setMotherProfile(null);
+      setDoctorProfile(null);
     } catch (err) {
+      console.error("Error loading profile:", err);
       setError(err instanceof Error ? err : new Error("Profile load failed"));
     }
   };
@@ -230,12 +242,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateLastSeen = async (userId: string) => {
+    // Update last_seen in the appropriate profile table based on role
     const now = new Date().toISOString();
-
-    await sb
-      .from("users")
-      .update({ last_seen: now })
-      .eq("id", userId);
+    
+    if (userRole === 'mother') {
+      await sb
+        .from("mother_profiles")
+        .update({ updated_at: now })
+        .eq("user_id", userId);
+    } else if (userRole === 'doctor') {
+      await sb
+        .from("doctor_profiles")
+        .update({ updated_at: now })
+        .eq("user_id", userId);
+    } else if (userRole === 'admin') {
+      await sb
+        .from("admin_profiles")
+        .update({ updated_at: now })
+        .eq("user_id", userId);
+    }
 
     setLastSeen(new Date());
   };
