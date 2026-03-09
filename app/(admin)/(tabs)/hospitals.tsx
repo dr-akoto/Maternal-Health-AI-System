@@ -125,7 +125,11 @@ export default function HospitalsScreen() {
             <TouchableOpacity key={hospital.id} style={styles.hospitalCard}>
               <View style={styles.hospitalHeader}>
                 <View style={styles.hospitalIcon}>
+<<<<<<< HEAD
                   <Building2 size={24} color="#10B981" />
+=======
+                  <Building2 size={24} color="#7c3aed" />
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
                 </View>
                 <View style={styles.hospitalInfo}>
                   <Text style={styles.hospitalName}>{hospital.name}</Text>
@@ -212,7 +216,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
+<<<<<<< HEAD
     backgroundColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     justifyContent: 'center',
     alignItems: 'center',
   },

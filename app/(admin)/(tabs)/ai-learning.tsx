@@ -140,8 +140,13 @@ export default function AILearningScreen() {
         {/* Stats Overview */}
         <View style={styles.statsContainer}>
           <View style={[styles.statCard, { backgroundColor: '#f3e8ff' }]}>
+<<<<<<< HEAD
             <Brain size={24} color="#10B981" />
             <Text style={[styles.statNumber, { color: '#10B981' }]}>{stats.modelAccuracy}%</Text>
+=======
+            <Brain size={24} color="#7c3aed" />
+            <Text style={[styles.statNumber, { color: '#7c3aed' }]}>{stats.modelAccuracy}%</Text>
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             <Text style={styles.statLabel}>Model Accuracy</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: '#fef3c7' }]}>
@@ -194,7 +199,11 @@ export default function AILearningScreen() {
                   >
                     <View style={styles.candidateInfo}>
                       <View style={styles.candidateType}>
+<<<<<<< HEAD
                         <Brain size={16} color="#10B981" />
+=======
+                        <Brain size={16} color="#7c3aed" />
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
                         <Text style={styles.typeText}>{candidate.type}</Text>
                       </View>
                       <View
@@ -348,8 +357,13 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
   tabActive: {
+<<<<<<< HEAD
     backgroundColor: '#10B981',
     borderColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+    borderColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   tabText: {
     fontSize: 14,
@@ -391,7 +405,11 @@ const styles = StyleSheet.create({
   typeText: {
     fontSize: 14,
     fontWeight: '600',
+<<<<<<< HEAD
     color: '#10B981',
+=======
+    color: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   confidenceBadge: {
     flexDirection: 'row',

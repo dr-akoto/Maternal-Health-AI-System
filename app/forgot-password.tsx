@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useRef, useEffect } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 import {
   View,
   Text,
@@ -7,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+<<<<<<< HEAD
   Animated,
   Dimensions,
   TextInput,
@@ -17,6 +22,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Mail, ArrowLeft, Send, CheckCircle, KeyRound } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
+=======
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { api } from '@/lib/api';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -25,6 +37,7 @@ export default function ForgotPasswordScreen() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+<<<<<<< HEAD
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const successScale = useRef(new Animated.Value(0)).current;
@@ -55,6 +68,8 @@ export default function ForgotPasswordScreen() {
     }
   }, [success]);
 
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   const handleResetPassword = async () => {
     if (!email) {
       setError('Please enter your email');
@@ -78,6 +93,7 @@ export default function ForgotPasswordScreen() {
   if (success) {
     return (
       <View style={styles.container}>
+<<<<<<< HEAD
         <LinearGradient
           colors={['#10B981', '#059669']}
           start={{ x: 0, y: 0 }}
@@ -122,11 +138,25 @@ export default function ForgotPasswordScreen() {
             </TouchableOpacity>
           </Animated.View>
         </LinearGradient>
+=======
+        <View style={styles.successContainer}>
+          <Text style={styles.successTitle}>Check Your Email</Text>
+          <Text style={styles.successMessage}>
+            We've sent password reset instructions to {email}
+          </Text>
+          <Button
+            title="Back to Login"
+            onPress={() => router.back()}
+            style={styles.button}
+          />
+        </View>
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
       </View>
     );
   }
 
   return (
+<<<<<<< HEAD
     <View style={styles.container}>
       {/* Background Header */}
       <LinearGradient
@@ -253,12 +283,56 @@ export default function ForgotPasswordScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
+=======
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Reset Password</Text>
+          <Text style={styles.subtitle}>
+            Enter your email and we'll send you instructions to reset your password
+          </Text>
+        </View>
+
+        <View style={styles.form}>
+          <Input
+            label="Email"
+            placeholder="your.email@example.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+          />
+
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <Button
+            title="Send Reset Link"
+            onPress={handleResetPassword}
+            loading={loading}
+            style={styles.button}
+          />
+
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>Back to Login</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+<<<<<<< HEAD
     backgroundColor: '#F8FAFC',
   },
   headerGradient: {
@@ -463,10 +537,59 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
+=======
+    backgroundColor: '#F9FAFB',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  form: {
+    width: '100%',
+  },
+  button: {
+    marginTop: 8,
+  },
+  error: {
+    color: '#FF3B30',
+    fontSize: 14,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  linkButton: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  linkText: {
+    color: '#007AFF',
+    fontSize: 14,
+  },
+  successContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   successTitle: {
     fontSize: 28,
     fontWeight: '700',
+<<<<<<< HEAD
     color: '#fff',
     marginBottom: 12,
   },
@@ -509,5 +632,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+=======
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  successMessage: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 32,
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
 });

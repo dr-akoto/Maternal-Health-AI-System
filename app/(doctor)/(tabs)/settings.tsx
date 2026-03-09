@@ -7,9 +7,12 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+<<<<<<< HEAD
   Platform,
   Modal,
   Pressable,
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -24,6 +27,7 @@ import {
   ChevronRight,
   FileText,
   Phone,
+<<<<<<< HEAD
   X,
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
@@ -45,11 +49,17 @@ const showAlert = (title: string, message: string, buttons?: Array<{text: string
   }
 };
 
+=======
+} from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
+
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 export default function DoctorSettingsScreen() {
   const { user, profile, signOut } = useAuth();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [criticalAlerts, setCriticalAlerts] = useState(true);
+<<<<<<< HEAD
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -88,6 +98,25 @@ export default function DoctorSettingsScreen() {
         ]
       );
     }
+=======
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   };
 
   const SettingItem = ({
@@ -153,19 +182,31 @@ export default function DoctorSettingsScreen() {
               icon={User}
               title="Edit Profile"
               subtitle="Update your information"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Edit Profile')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={Shield}
               title="Change Password"
               subtitle="Update your password"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Change Password')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={Phone}
               title="Phone Number"
               subtitle={profile?.phone || 'Not set'}
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Phone Number')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
           </View>
         </View>
@@ -224,7 +265,11 @@ export default function DoctorSettingsScreen() {
               icon={Globe}
               title="Language"
               subtitle="English"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Language')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
           </View>
         </View>
@@ -237,17 +282,29 @@ export default function DoctorSettingsScreen() {
               icon={HelpCircle}
               title="Help Center"
               subtitle="Get help and support"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Help Center')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={FileText}
               title="Terms of Service"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Terms of Service')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={Shield}
               title="Privacy Policy"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Privacy Policy')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
           </View>
         </View>
@@ -265,6 +322,7 @@ export default function DoctorSettingsScreen() {
 
         <View style={{ height: 100 }} />
       </ScrollView>
+<<<<<<< HEAD
 
       {/* Sign Out Modal for Web */}
       <Modal
@@ -310,6 +368,8 @@ export default function DoctorSettingsScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     </SafeAreaView>
   );
 }
@@ -454,6 +514,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 24,
   },
+<<<<<<< HEAD
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -522,4 +583,6 @@ const styles = StyleSheet.create({
   modalButtonDisabled: {
     opacity: 0.6,
   },
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 });

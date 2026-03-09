@@ -178,7 +178,11 @@ export default function AdminDashboard() {
           <View style={styles.aiCard}>
             <View style={styles.aiHeader}>
               <View style={styles.aiInfo}>
+<<<<<<< HEAD
                 <Brain size={24} color="#10B981" />
+=======
+                <Brain size={24} color="#7c3aed" />
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
                 <View style={{ marginLeft: 12 }}>
                   <Text style={styles.aiTitle}>Model Version</Text>
                   <Text style={styles.aiVersion}>{stats.aiModelVersion}</Text>
@@ -246,7 +250,11 @@ export default function AdminDashboard() {
 
             <TouchableOpacity style={styles.actionCard}>
               <View style={[styles.actionIcon, { backgroundColor: '#f3e8ff' }]}>
+<<<<<<< HEAD
                 <Brain size={24} color="#10B981" />
+=======
+                <Brain size={24} color="#7c3aed" />
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
               </View>
               <Text style={styles.actionText}>AI Settings</Text>
             </TouchableOpacity>
@@ -288,7 +296,11 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 14,
+<<<<<<< HEAD
     color: '#10B981',
+=======
+    color: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     fontWeight: '600',
   },
   adminName: {
@@ -401,7 +413,11 @@ const styles = StyleSheet.create({
   learningNumber: {
     fontSize: 24,
     fontWeight: 'bold',
+<<<<<<< HEAD
     color: '#10B981',
+=======
+    color: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   learningLabel: {
     fontSize: 12,
@@ -413,7 +429,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#e5e7eb',
   },
   reviewButton: {
+<<<<<<< HEAD
     backgroundColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     paddingVertical: 12,
     borderRadius: 12,
     marginTop: 20,

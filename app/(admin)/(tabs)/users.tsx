@@ -139,7 +139,11 @@ export default function UsersScreen() {
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'admin':
+<<<<<<< HEAD
         return '#10B981';
+=======
+        return '#7c3aed';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
       case 'doctor':
         return '#2563eb';
       case 'mother':
@@ -363,8 +367,13 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
   filterTabActive: {
+<<<<<<< HEAD
     backgroundColor: '#10B981',
     borderColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+    borderColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   filterTabText: {
     fontSize: 14,
@@ -395,7 +404,11 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
+<<<<<<< HEAD
     backgroundColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,

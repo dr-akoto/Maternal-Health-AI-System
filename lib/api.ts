@@ -9,7 +9,11 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 // API Base URL - use environment variable or default to localhost
+<<<<<<< HEAD
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+=======
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 
 // Storage keys
 const TOKEN_KEY = 'maternal_health_token';

@@ -131,7 +131,11 @@ export default function NutritionScreen() {
       case 'lunch':
         return <Sun size={20} color="#F59E0B" />;
       case 'dinner':
+<<<<<<< HEAD
         return <Moon size={20} color="#10B981" />;
+=======
+        return <Moon size={20} color="#6366F1" />;
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
       default:
         return <Utensils size={20} color="#10B981" />;
     }

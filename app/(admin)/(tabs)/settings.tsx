@@ -7,9 +7,12 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+<<<<<<< HEAD
   Platform,
   Modal,
   Pressable,
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -25,6 +28,7 @@ import {
   ChevronRight,
   AlertTriangle,
   RefreshCw,
+<<<<<<< HEAD
   X,
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
@@ -46,12 +50,18 @@ const showAlert = (title: string, message: string, buttons?: Array<{text: string
   }
 };
 
+=======
+} from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
+
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 export default function AdminSettingsScreen() {
   const { user, profile, signOut } = useAuth();
   const [systemNotifications, setSystemNotifications] = useState(true);
   const [emergencyAlerts, setEmergencyAlerts] = useState(true);
   const [aiLearningEnabled, setAiLearningEnabled] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+<<<<<<< HEAD
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -90,11 +100,34 @@ export default function AdminSettingsScreen() {
         ]
       );
     }
+=======
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   };
 
   const handleMaintenanceToggle = (value: boolean) => {
     if (value) {
+<<<<<<< HEAD
       showAlert(
+=======
+      Alert.alert(
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
         'Enable Maintenance Mode',
         'This will prevent users from accessing the app. Are you sure?',
         [
@@ -163,7 +196,11 @@ export default function AdminSettingsScreen() {
             </Text>
             <Text style={styles.profileEmail}>{user?.email}</Text>
             <View style={styles.roleBadge}>
+<<<<<<< HEAD
               <Shield size={12} color="#10B981" />
+=======
+              <Shield size={12} color="#7c3aed" />
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
               <Text style={styles.roleText}>Administrator</Text>
             </View>
           </View>
@@ -182,7 +219,11 @@ export default function AdminSettingsScreen() {
                   value={systemNotifications}
                   onValueChange={setSystemNotifications}
                   trackColor={{ false: '#e5e7eb', true: '#c4b5fd' }}
+<<<<<<< HEAD
                   thumbColor={systemNotifications ? '#10B981' : '#f3f4f6'}
+=======
+                  thumbColor={systemNotifications ? '#7c3aed' : '#f3f4f6'}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
                 />
               }
             />
@@ -215,7 +256,11 @@ export default function AdminSettingsScreen() {
                   value={aiLearningEnabled}
                   onValueChange={setAiLearningEnabled}
                   trackColor={{ false: '#e5e7eb', true: '#c4b5fd' }}
+<<<<<<< HEAD
                   thumbColor={aiLearningEnabled ? '#10B981' : '#f3f4f6'}
+=======
+                  thumbColor={aiLearningEnabled ? '#7c3aed' : '#f3f4f6'}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
                 />
               }
             />
@@ -223,13 +268,21 @@ export default function AdminSettingsScreen() {
               icon={Database}
               title="Training Data"
               subtitle="Manage AI training datasets"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Training Data')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={RefreshCw}
               title="Model Updates"
               subtitle="Deploy new AI models"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Model Updates')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
           </View>
         </View>
@@ -242,13 +295,21 @@ export default function AdminSettingsScreen() {
               icon={Shield}
               title="Access Control"
               subtitle="Manage user permissions"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Access Control')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={FileText}
               title="Audit Logs"
               subtitle="View system activity logs"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('Audit Logs')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={AlertTriangle}
@@ -274,13 +335,21 @@ export default function AdminSettingsScreen() {
             <SettingItem
               icon={Globe}
               title="API Documentation"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('API Documentation')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
             <SettingItem
               icon={FileText}
               title="System Information"
               subtitle="Version 1.0.0"
+<<<<<<< HEAD
               onPress={() => handleFeatureNotAvailable('System Information')}
+=======
+              onPress={() => {}}
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
             />
           </View>
         </View>
@@ -295,6 +364,7 @@ export default function AdminSettingsScreen() {
 
         <View style={{ height: 100 }} />
       </ScrollView>
+<<<<<<< HEAD
 
       {/* Sign Out Modal for Web */}
       <Modal
@@ -340,6 +410,8 @@ export default function AdminSettingsScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     </SafeAreaView>
   );
 }
@@ -376,7 +448,11 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
+<<<<<<< HEAD
     backgroundColor: '#10B981',
+=======
+    backgroundColor: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -412,7 +488,11 @@ const styles = StyleSheet.create({
   },
   roleText: {
     fontSize: 12,
+<<<<<<< HEAD
     color: '#10B981',
+=======
+    color: '#7c3aed',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     fontWeight: '500',
   },
   section: {
@@ -487,6 +567,7 @@ const styles = StyleSheet.create({
     color: '#dc2626',
     fontWeight: '600',
   },
+<<<<<<< HEAD
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -555,4 +636,6 @@ const styles = StyleSheet.create({
   modalButtonDisabled: {
     opacity: 0.6,
   },
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 });

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -6,10 +7,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Heart, Baby, Shield, Activity } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
+=======
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+import { Heart } from 'lucide-react-native';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 
 export default function SplashScreen() {
   const router = useRouter();
   const { loading, userRole } = useAuth();
+<<<<<<< HEAD
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -47,6 +56,8 @@ export default function SplashScreen() {
       ])
     ).start();
   }, []);
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 
   useEffect(() => {
     if (!loading) {
@@ -60,11 +71,16 @@ export default function SplashScreen() {
         } else {
           router.replace('/login');
         }
+<<<<<<< HEAD
       }, 2500);
+=======
+      }, 2000);
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     }
   }, [loading, userRole]);
 
   return (
+<<<<<<< HEAD
     <LinearGradient
       colors={['#10B981', '#059669', '#34D399']}
       start={{ x: 0, y: 0 }}
@@ -137,6 +153,13 @@ export default function SplashScreen() {
       {/* Bottom tagline */}
       <Text style={styles.bottomText}>Caring for mothers, protecting lives</Text>
     </LinearGradient>
+=======
+    <View style={styles.container}>
+      <Heart size={80} color="#007AFF" fill="#007AFF" />
+      <Text style={styles.title}>Maternal Health</Text>
+      <Text style={styles.subtitle}>Caring for mothers, protecting lives</Text>
+    </View>
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   );
 }
 
@@ -145,6 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+<<<<<<< HEAD
   },
   decorativeCircle1: {
     position: 'absolute',
@@ -279,5 +303,19 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
     fontSize: 14,
     fontWeight: '500',
+=======
+    backgroundColor: '#F9FAFB',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#007AFF',
+    marginTop: 24,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 8,
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
 });

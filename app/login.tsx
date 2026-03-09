@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from 'react';
+=======
+import React, { useState, useEffect } from 'react';
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 import {
   View,
   Text,
@@ -7,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+<<<<<<< HEAD
   Animated,
   Dimensions,
   TextInput,
@@ -19,16 +24,30 @@ import { api } from '@/lib/api';
 
 const { width, height } = Dimensions.get('window');
 
+=======
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Heart } from 'lucide-react-native';
+import { api } from '@/lib/api';
+
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
 export default function LoginScreen() {
   const router = useRouter();
   const { signIn, userRole, loading: authLoading, user, signOut, reloadProfile } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+<<<<<<< HEAD
   const [showPassword, setShowPassword] = useState(false);
+=======
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [noProfile, setNoProfile] = useState(false);
 
+<<<<<<< HEAD
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
@@ -47,6 +66,9 @@ export default function LoginScreen() {
     ]).start();
   }, []);
 
+=======
+  // Redirect when user is authenticated and has a role
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   useEffect(() => {
     if (!authLoading && user && userRole) {
       setLoading(false);
@@ -59,12 +81,17 @@ export default function LoginScreen() {
         router.replace('/(admin)/(tabs)' as any);
       }
     } else if (!authLoading && user && !userRole) {
+<<<<<<< HEAD
+=======
+      // User authenticated but no profile found
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
       setLoading(false);
       setNoProfile(true);
       setError('Your profile was not created. Click below to create it.');
     }
   }, [userRole, authLoading, user]);
 
+<<<<<<< HEAD
   const handleCreateProfile = async () => {
     if (!user) return;
     setLoading(true);
@@ -75,6 +102,26 @@ export default function LoginScreen() {
       if (profileError) {
         throw new Error(profileError.error || 'Failed to create profile');
       }
+=======
+  // Create missing profile using API
+  const handleCreateProfile = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const fullName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+      
+      // Use API to create profile
+      const { data, error: profileError } = await api.createProfile(fullName);
+      
+      if (profileError) {
+        throw new Error(profileError.error || 'Failed to create profile');
+      }
+      
+      // Reload profile
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
       setNoProfile(false);
       await reloadProfile();
     } catch (err: any) {
@@ -90,18 +137,36 @@ export default function LoginScreen() {
       setError('Please enter email and password');
       return;
     }
+<<<<<<< HEAD
     setLoading(true);
     setError('');
     const { error: signInError } = await signIn(email, password);
+=======
+
+    setLoading(true);
+    setError('');
+
+    const { error: signInError } = await signIn(email, password);
+
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     if (signInError) {
       setError(signInError.message || 'Login failed. Please try again.');
       setLoading(false);
     } else {
+<<<<<<< HEAD
       setTimeout(() => setLoading(false), 3000);
+=======
+      // Success - loading will stop when redirect happens via useEffect
+      // Add a small delay then stop loading if redirect doesn't happen
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
     }
   };
 
   return (
+<<<<<<< HEAD
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
@@ -268,12 +333,97 @@ export default function LoginScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
+=======
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Heart size={60} color="#007AFF" fill="#007AFF" />
+          <Text style={styles.title}>Maternal Health</Text>
+          <Text style={styles.subtitle}>Welcome back</Text>
+        </View>
+
+        <View style={styles.form}>
+          <Input
+            label="Email"
+            placeholder="your.email@example.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+          />
+
+          <Input
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoComplete="password"
+          />
+
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          {noProfile ? (
+            <View>
+              <Button
+                title="Create My Profile"
+                onPress={handleCreateProfile}
+                loading={loading}
+                style={styles.createProfileButton}
+              />
+              <TouchableOpacity
+                onPress={async () => {
+                  await signOut();
+                  setNoProfile(false);
+                  setError('');
+                }}
+                style={styles.linkButton}
+              >
+                <Text style={styles.linkText}>Sign in with different account</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Button
+              title="Sign In"
+              onPress={handleLogin}
+              loading={loading}
+              style={styles.button}
+            />
+          )}
+
+          <TouchableOpacity
+            onPress={() => router.push('/forgot-password')}
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            onPress={() => router.push('/register')}
+            style={styles.linkButton}
+          >
+            <Text style={styles.signupText}>
+              Don't have an account?{' '}
+              <Text style={styles.signupLink}>Sign Up</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+<<<<<<< HEAD
     backgroundColor: '#F8FAFC',
   },
   headerGradient: {
@@ -420,12 +570,52 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+=======
+    backgroundColor: '#F9FAFB',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#007AFF',
+    marginTop: 16,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 8,
+  },
+  form: {
+    width: '100%',
+  },
+  button: {
+    marginTop: 8,
+  },
+  createProfileButton: {
+    marginTop: 8,
+    backgroundColor: '#10B981',
+  },
+  error: {
+    color: '#FF3B30',
+    fontSize: 14,
+    marginBottom: 12,
+    textAlign: 'center',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
   linkButton: {
     marginTop: 16,
     alignItems: 'center',
   },
   linkText: {
+<<<<<<< HEAD
     color: '#10B981',
     fontSize: 14,
     fontWeight: '500',
@@ -455,5 +645,22 @@ const styles = StyleSheet.create({
   signUpLink: {
     color: '#10B981',
     fontWeight: '700',
+=======
+    color: '#007AFF',
+    fontSize: 14,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 24,
+  },
+  signupText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  signupLink: {
+    color: '#007AFF',
+    fontWeight: '600',
+>>>>>>> 84817c9d126aa0ee4fcfd2aea41ef4b7f9235469
   },
 });
